@@ -1,11 +1,3 @@
-Pasla Codruta-Stefania 336CC
-
--Pentru implementarea temei am avut ca punct de plecare laboratorul 10.
-
--Fisierul "requests.c" este in mare parte asemanator cu cel implementat la 
-laborator. Am adaugat header pentru cookie si token si am mai implementat
-o functie pentru request-ul de tip delete.
-
 CLIENTUL:
 
 -Functia REGISTER:
