@@ -1,0 +1,82 @@
+Pasla Codruta-Stefania 336CC
+
+-Pentru implementarea temei am avut ca punct de plecare laboratorul 10.
+
+-Fisierul "requests.c" este in mare parte asemanator cu cel implementat la 
+laborator. Am adaugat header pentru cookie si token si am mai implementat
+o functie pentru request-ul de tip delete.
+
+CLIENTUL:
+
+-Functia REGISTER:
+    -Cu ajutorul functiei register_login_helper() am luat input-ul de la tastatura
+    si l-am transformat in json pentru a putea fi pus in cerere. Pentru a converti
+    input-ul din string in json m-am folosit de parson.c si parson.h. Am folosit 
+    json_object_get_string() care primeste un object si cheia care se doreste a 
+    se scoate, apoi o intoarce ca un char*.
+
+-Afisari de eroare sau succes:
+    -Acestea sunt in toate comenzile. Copiez raspunsul server-ului intr-o 
+    alta variabila pentru a nu fi alterat, apoi apelez pe acea variabila functia
+    get_server_id(). Aceasta functie imi ia prima cifra din statusul din raspunsul
+    server-ului (ex: daca am eroarea 401, functia get_server_id() imi intoarce 4).
+    Am nevoie de aceasta cifra mai departe in functia get_server_error() care imi
+    va extrage mesajul de eroare de la finalul raspunsului server-ului.
+    Astfel, daca raspunsul intoarce eroare, atunci folosesc functia 
+    get_server_error(), altfel afisez mesajul de succes corespunzator 
+    fiecarei comenzi.
+
+-Functia LOGIN:
+    -Aceasta are la baza implementarea functiei de register. Server-ul va intoarce
+    in raspuns un cookie pe care il extrag cu ajutorul functiei get_cookie().
+
+-Functia ENTER_LIBRARY:
+    -Verifica, in primul rand, daca user-ul este logat. Server-ul va intoarce
+    un token pe care il extrag cu functia get_token(). Functiile get_server_error(),
+    get_cookie(), get_token() si get_server_id() au la baza acelasi principiu de
+    functionare: cauta dupa un string, afiseaza tot de dupa string-ul dat pana la
+    un alt string dat (exclusiv).
+
+-Functia GET_BOOKS:
+    -Verifica daca user-ul este logat si daca are acces in biblioteca. Va
+    intoarce o lista cu cartile existente in biblioteca. Aceasta lista este de tip
+    json, iar cu ajutorul functiei get_id_title_books() am extras id-ul si titlul
+    pentru fiecare carte. In functia get_id_title_books(), apelez 
+    get_list_of_books() care imi intoarce json-ul cu lista de carti. In 
+    get_id_title_books() parsez lista de carti, obtin un array cu titlul si id-uri,
+    apoi intr-un for voi lua id-ul si titlul fiecarei carti cu ajutorul functiilor
+    din parson: json_object_get_number(), json_object_get_string().
+
+-Functia GET_BOOK:
+    -Primeste in raspunsul server-ului (in caz de succes) un json cu detaliile
+    despre carte. Aceasta functie este asemanatoare cu GET_BOOKS, cu diferenta
+    ca aici am functia get_book_helper() in care iau toate detaliile despre 
+    carte, nu doar id-ul si titlul sau. Pentru aceasta folosesc parson cu
+    functiile amintite in GET_BOOKS. Aceasta functie reuseste deci sa transforme
+    un json in string-uri dispuse in formatul cerut.
+
+-In functiile in care s-a cerut id-ul in url am concatenat id-ul la vechiul
+url, apoi noul sir l-am pus in cerere.
+
+-Functia ADD_BOOK:
+    -Are la baza acelasi principiu ca si functia REGISTER. Datele sunt introduse
+    de la tastatura (pot contine si spatii), sunt convertite in json cu ajutorul
+    functiei add_book_helper(), puse in format pretty cu ajutorul functiei 
+    json_serialize_to_string_pretty() si trimise la server. 
+
+-Functia DELETE_BOOK:
+    -Ma asigur ca am un user logat si ca acesta are acces la biblioteca.
+    Id-ul e luat de la stdin si concatenant la url. Afiseaza mesajul
+    de eroare in cazul in care server-ul intoarce unul in raspunsul sau,
+    altfel intoarce mesaj de succes.
+
+-Functia LOGOUT:
+    -Ma asigur ca user-ul este logat, apoi trimit cererea de tip get
+    si afisez mesajele de eroare in cazul in care acestea exista, 
+    altfel afisez un mesaj pentru ca user-ul sa stie ca delogarea a functionat.
+
+-In cazul introducerii unei comenzi inexistente, se va afisa un mesaj corespunzator
+de eroare.
+
+
+
